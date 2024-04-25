@@ -1,1 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+     <script>
+        fetch("./bitecs.0.3.40.min.js").then(a => a.text())
+        .then(a => {
+            eval(a);
+            const {
+                createWorld,
+                Types,
+                defineComponent,
+                defineQuery,
+                addEntity,
+                addComponent,
+                pipe,
+            } = bitecs;
 
+            // Define components
+            const Position = defineComponent({
+                x: Types.f32,
+                y: Types.f32,
+            });
+
+            const Choice = defineComponent({
+                value: Types.ui8,
+            });
+
+
+            // Create a world
+            const world = createWorld();
+
+            // Create a player entity
+            const player = addEntity(world);
+            addComponent(world, Position, player);
+            addComponent(world, Choice, player);
+
+            // Create a computer entity
+            const computer = addEntity(world);
+            addComponent(world, Position, computer);
+            addComponent(world, Choice, computer);
+
+            // Define a query to retrieve entities with Choice component
+            const entitiesWithChoice = defineQuery([Choice]);
+
+            // Game loop
+            function gameLoop() {
+                // Process player input
+                const playerInput = parseInt(prompt("Enter your choice (1-3):"));
+                Choice.value[player] = playerInput;
+
+                // Process computer input
+                const computerInput = Math.floor(Math.random() * 3) + 1;
+                Choice.value[computer] = computerInput;
+
+                // see tutorial on https://github.com/NateTheGreatt/bitECS
+                // entitiesWithChoice(world);
+
+                // Determine the winner
+                const playerChoice = Choice.value[player];
+                const computerChoice = Choice.value[computer];
+
+                if (playerChoice === computerChoice) {
+                    console.log("It's a tie!");
+                } else if (
+                    (playerChoice === 1 && computerChoice === 2) ||
+                    (playerChoice === 2 && computerChoice === 3) ||
+                    (playerChoice === 3 && computerChoice === 1)
+                ) {
+                    console.log("You win!");
+                } else {
+                    console.log("Computer wins!");
+                }
+
+                // Update game state and render
+                // ...
+
+                requestAnimationFrame(gameLoop);
+            }
+
+            // Start the game loop
+            gameLoop();
+        });
+    </script>
+</body>
+</html>
