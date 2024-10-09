@@ -13,3 +13,7 @@
         bitComponentNames.set(Component, name);
       }
       ```
+
+### Notes
+- `defineQuery` = make a predicate
+- `enterQuery` = similar to a thenable function which start the querying
